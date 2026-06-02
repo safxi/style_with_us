@@ -1,93 +1,69 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
   AuthService._();
 
   static final AuthService instance = AuthService._();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final CollectionReference<Map<String, dynamic>> _usersRef =
-      FirebaseFirestore.instance.collection('users');
+  final SupabaseClient _client = Supabase.instance.client;
 
-  User? get currentUser => _auth.currentUser;
+  dynamic get currentUser => _client.auth.currentUser;
 
-  Stream<User?> authStateChanges() => _auth.authStateChanges();
+  Stream<dynamic> authStateChanges() => _client.auth.onAuthStateChange.map((e) => _client.auth.currentUser);
 
-  Future<User?> signUp({
+  Future<dynamic> signUp({
     required String name,
     required String email,
     required String password,
     required String role,
   }) async {
-    final credential = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    await credential.user?.updateDisplayName(name);
-
-    await _usersRef.doc(credential.user!.uid).set({
-      'name': name,
-      'email': email,
-      'role': role,
-      'brandId': null,
-      'createdAt': FieldValue.serverTimestamp(),
-      'preferences': <String, dynamic>{},
-    });
-
-    return credential.user;
+    final res = await _client.auth.signUp(email: email, password: password);
+    final user = res.user;
+    if (user != null) {
+      await _client.from('users').insert({
+        'id': user.id,
+        'name': name,
+        'email': email,
+        'role': role,
+        'brandId': null,
+        'preferences': <String, dynamic>{},
+      });
+    }
+    return user;
   }
 
-  Future<User?> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<dynamic> login({required String email, required String password}) async {
     _cachedRole = null;
     _cachedBrandId = null;
-    final credential = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return credential.user;
+    final res = await _client.auth.signInWithPassword(email: email, password: password);
+    return res.user;
   }
 
   Future<void> logout() async {
     _cachedRole = null;
     _cachedBrandId = null;
-    await _auth.signOut();
+    await _client.auth.signOut();
   }
 
-  /// Returns the current user's role stored in Firestore.
-  /// Defaults to `user` if the document or field is missing.
   String? _cachedRole;
 
   Future<String> getCurrentUserRole() async {
     if (_cachedRole != null) return _cachedRole!;
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw Exception('No authenticated user found');
-    }
-
-    final snapshot = await _usersRef
-        .doc(user.uid)
-        .get()
-        .timeout(const Duration(seconds: 10), onTimeout: () {
-      throw Exception('Role fetch timed out. Check your connection.');
-    });
-    final data = snapshot.data() ?? <String, dynamic>{};
+    final user = _client.auth.currentUser;
+    if (user == null) throw Exception('No authenticated user found');
+    final res = await _client.from('users').select('role,brandId').eq('id', user.id).single();
+    if (res == null) throw Exception('Failed to fetch role');
+    final data = res is Map<String, dynamic> ? res : (res as Map?)?.cast<String, dynamic>() ?? {};
     final role = (data['role'] as String?)?.toLowerCase().trim();
     final result = (role == null || role.isEmpty) ? 'user' : role;
     _cachedRole = result;
-    // also store brandId if present
-    _cachedBrandId = data['brandId'] as int?;
+    _cachedBrandId = (data['brandId'] as int?);
     return result;
   }
 
   int? _cachedBrandId;
   int? get currentBrandId => _cachedBrandId;
 
-  /// synchronous role (may be null until fetched once).
   String? get currentRole => _cachedRole;
 }
 

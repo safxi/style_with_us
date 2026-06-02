@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
@@ -66,7 +65,7 @@ class _VirtualTryOnScreenState extends State<VirtualTryOnScreen> {
     try {
       final imageUrl = await _uploadToStorage(_selectedImage!);
       final int productIdInt = int.tryParse(widget.productId) ?? 0;
-      final uidHash = FirebaseAuth.instance.currentUser?.uid.hashCode ?? 0;
+      final uidHash = Supabase.instance.client.auth.currentUser?.id.hashCode ?? 0;
       final response = await _apiClient.postJson(
         '/ml/virtual-tryon',
         body: {
@@ -100,11 +99,11 @@ class _VirtualTryOnScreenState extends State<VirtualTryOnScreen> {
   }
 
   Future<String> _uploadToStorage(XFile image) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'anon';
+    final userId = Supabase.instance.client.auth.currentUser?.id ?? 'anon';
     final filename = 'tryon_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final ref = FirebaseStorage.instance.ref('tryon/$uid/$filename');
-    await ref.putFile(File(image.path));
-    return ref.getDownloadURL();
+    final path = 'tryon/$userId/$filename';
+    await Supabase.instance.client.storage.from('public').upload(path, File(image.path));
+    return Supabase.instance.client.storage.from('public').getPublicUrl(path);
   }
 
   @override

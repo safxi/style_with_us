@@ -8,11 +8,13 @@ from ..ml_utils import analyze_image
 logger = logging.getLogger(__name__)
 
 @shared_task(bind=True)
-def process_style_analysis(self, image_url: str):
+def process_style_analysis(self, user_id: int, image_url: str):
     """
     Celery task that runs ML body/skin classification.
     """
     try:
+        from ..db import SessionLocal
+        from .. import models
         results = analyze_image(image_url)
         
         if results.get("error"):
@@ -20,15 +22,57 @@ def process_style_analysis(self, image_url: str):
         
         body_type = results.get("body_type") or "rectangle"
         body_confidence = results.get("body_confidence") or 0.5
-        skin_tone = results.get("skin_tone") or "neutral"
+        skin_tone = results.get("skin_tone") or "medium"
         skin_confidence = results.get("skin_confidence") or 0.5
         
+        shapes = ["hourglass", "pear", "apple", "rectangle", "inverted"]
+        tones = ["fair", "light", "medium", "olive", "brown", "dark"]
+        
+        bt = body_type if body_type in shapes else "rectangle"
+        st = skin_tone if skin_tone in tones else "medium"
+        
+        shape_advice = {
+            "hourglass": "Opt for wrap dresses and belted tops to highlight your waist.",
+            "pear": "A-line skirts and structured shoulder tops balance your silhouette beautifully.",
+            "apple": "Empire waistlines and V-necks draw the eye upward and elongate your frame.",
+            "rectangle": "Create curves with peplum tops, layers, and color blocking.",
+            "inverted": "Wide-leg pants and A-line skirts help balance broader shoulders."
+        }
+        
+        tone_advice = {
+            "fair": "Jewel tones like emerald and sapphire, or soft pastels work wonderfully for your complexion.",
+            "light": "Earthy tones, soft rose, and navy blue are incredibly flattering for your skin.",
+            "medium": "Primary colors, rich camel, and deep burgundy complement your warm undertones.",
+            "olive": "Bright pinks, deep navy, and crisp white beautifully highlight your olive glow.",
+            "brown": "Vibrant yellows, warm orange, and rich cobalt blue are stunning on you.",
+            "dark": "Striking jewel tones, bright white, and bold reds create gorgeous contrast."
+        }
+        
+        summary = f"Based on our ML analysis, your distinct {bt} body shape pairs excellently with your {st} skin tone. {shape_advice[bt]} Furthermore, {tone_advice[st].lower()}"
+        
+        db = SessionLocal()
+        try:
+            analysis_record = models.AnalysisResult(
+                user_id=user_id,
+                body_shape=bt,
+                skin_tone=st,
+                summary=summary
+            )
+            db.add(analysis_record)
+            db.commit()
+            db.refresh(analysis_record)
+            record_id = analysis_record.id
+        finally:
+            db.close()
+            
         return {
             "status": "complete",
-            "body_type": body_type,
+            "analysis_id": str(record_id),
+            "body_type": bt,
             "body_confidence": body_confidence,
-            "skin_tone": skin_tone,
+            "skin_tone": st,
             "skin_confidence": skin_confidence,
+            "summary": summary
         }
     except Exception as e:
         logger.error(f"Error in process_style_analysis: {e}")

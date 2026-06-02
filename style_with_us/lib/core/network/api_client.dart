@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/app_config.dart';
 
 class ApiClient {
@@ -15,8 +15,8 @@ class ApiClient {
 
   /// Injects the Firebase token automatically
   Future<Map<String, String>> _buildHeaders() async {
-    final user = FirebaseAuth.instance.currentUser;
-    final token = user != null ? await user.getIdToken() : null;
+    final session = Supabase.instance.client.auth.currentSession;
+    final token = session?.accessToken;
     return {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',

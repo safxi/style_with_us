@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -116,7 +115,7 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
 
       // Step 2 – Analyze with ML backend
       _setProgress(0.45, 'Analyzing your style...');
-      final uid = FirebaseAuth.instance.currentUser?.uid.hashCode ?? 0;
+      final uid = Supabase.instance.client.auth.currentUser?.id.hashCode ?? 0;
       final analyzeResponse = await _apiClient.postJson(
         '/ml/analyze',
         body: {'user_id': uid, 'image_url': imageUrl},
@@ -169,11 +168,12 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
   }
 
   Future<String> _uploadToStorage(XFile image) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'anon';
+    final userId = Supabase.instance.client.auth.currentUser?.id ?? 'anon';
     final filename = 'analysis_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final ref = FirebaseStorage.instance.ref('analysis/$uid/$filename');
-    await ref.putFile(File(image.path));
-    return ref.getDownloadURL();
+    final path = 'analysis/$userId/$filename';
+    // upload to default bucket 'public' — ensure this bucket exists in your Supabase project
+    await Supabase.instance.client.storage.from('public').upload(path, File(image.path));
+    return Supabase.instance.client.storage.from('public').getPublicUrl(path);
   }
 
   void _setProgress(double value, String text) {

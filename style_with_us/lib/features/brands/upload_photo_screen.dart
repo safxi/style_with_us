@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/network/api_client.dart';
 
@@ -34,7 +34,7 @@ class _BrandUploadScreenState extends State<BrandUploadScreen> {
     
     setState(() => _isUploading = true);
     try {
-      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final token = Supabase.instance.client.auth.currentSession?.accessToken;
       final uri = Uri.parse('${_api.baseUrl}/photos/');
       
       // Map specifically to FastAPI Form Models

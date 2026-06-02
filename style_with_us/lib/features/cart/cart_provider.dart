@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+// Firebase/Firestore replaced by Supabase
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,8 +38,8 @@ class CartItem {
         'name': name,
         'price': price,
         'quantity': quantity,
-        'imageUrl': imageUrl,
-        'updatedAt': FieldValue.serverTimestamp(),
+      'imageUrl': imageUrl,
+      'updatedAt': DateTime.now().toIso8601String(),
       };
 
   factory CartItem.fromMap(Map<String, dynamic> map) => CartItem(
@@ -79,33 +79,25 @@ class CartNotifier extends Notifier<CartState> {
   @override
   CartState build() {
     // Kick off async load — return empty state immediately
-    _loadFromFirestore();
+    _loadFromSupabase();
     return const CartState(isLoading: true);
   }
 
   // ── Firestore helpers ────────────────────────────────────────
 
-  CollectionReference<Map<String, dynamic>>? get _cartRef {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return null;
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('cart');
-  }
+  Future<String?> get _userId async => Supabase.instance.client.auth.currentUser?.id;
 
-  Future<void> _loadFromFirestore() async {
-    final ref = _cartRef;
-    if (ref == null) {
+
+  Future<void> _loadFromSupabase() async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) {
       state = const CartState();
       return;
     }
-
     try {
-      final snapshot = await ref.get();
-      final items = snapshot.docs
-          .map((doc) => CartItem.fromMap(doc.data()))
-          .toList();
+      final res = await Supabase.instance.client.from('cart').select().eq('user_id', uid);
+      final rows = (res as List<dynamic>?) ?? [];
+      final items = rows.map((r) => CartItem.fromMap(Map<String, dynamic>.from(r as Map))).toList();
       state = CartState(items: items);
     } catch (_) {
       state = const CartState();
@@ -152,7 +144,10 @@ class CartNotifier extends Notifier<CartState> {
 
   void _upsertItem(CartItem item) async {
     try {
-      await _cartRef?.doc(item.skuId).set(item.toMap());
+      final uid = Supabase.instance.client.auth.currentUser?.id;
+      if (uid == null) return;
+      final payload = item.toMap()..addAll({'user_id': uid, 'skuId': item.skuId});
+      await Supabase.instance.client.from('cart').upsert(payload);
     } catch (_) {
       // Silent fail — local state is still correct
     }
@@ -160,19 +155,19 @@ class CartNotifier extends Notifier<CartState> {
 
   void _deleteItem(String skuId) async {
     try {
-      await _cartRef?.doc(skuId).delete();
+      final uid = Supabase.instance.client.auth.currentUser?.id;
+      if (uid == null) return;
+      await Supabase.instance.client.from('cart').delete().match({'user_id': uid, 'skuId': skuId});
     } catch (_) {}
   }
 
   void _deleteAll(List<String> skuIds) async {
-    final ref = _cartRef;
-    if (ref == null) return;
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return;
     try {
-      final batch = FirebaseFirestore.instance.batch();
       for (final id in skuIds) {
-        batch.delete(ref.doc(id));
+        await Supabase.instance.client.from('cart').delete().match({'user_id': uid, 'skuId': id});
       }
-      await batch.commit();
     } catch (_) {}
   }
 }

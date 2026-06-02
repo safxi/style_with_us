@@ -19,12 +19,13 @@ dependencies:
   go_router: ^13.2.0
 
   # Firebase
-  firebase_core: ^4.4.0
-  firebase_auth: ^6.1.4
-  cloud_firestore: ^6.1.2
-  firebase_storage: ^13.0.6
-  firebase_messaging: ^16.1.1
-  flutter_local_notifications: ^17.0.0
+  # Firebase packages removed
+  # firebase_core: ^4.4.0
+  # firebase_auth: ^6.1.4
+  # cloud_firestore: ^6.1.2
+  # firebase_storage: ^13.0.6
+  # firebase_messaging: ^16.1.1
+  # flutter_local_notifications: ^17.0.0
 
   # Networking (Required for AI APIs)
   dio: ^5.4.0
@@ -62,6 +63,7 @@ dependencies:
   fl_chart: ^0.65.0
   shared_preferences: ^2.5.5
   http_parser: ^4.1.2
+  supabase_flutter: ^2.12.4
 
 dev_dependencies:
   flutter_test:

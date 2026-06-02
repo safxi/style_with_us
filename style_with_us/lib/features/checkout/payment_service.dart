@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/network/api_client.dart';
@@ -42,7 +41,7 @@ class PaymentService {
     required CartState cart,
     String paymentGateway = 'stripe',
   }) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final uid = Supabase.instance.client.auth.currentUser?.id ?? '';
     final userId = uid.hashCode;
 
     final items = cart.items
@@ -76,8 +75,8 @@ class PaymentService {
       razorpayOrderId: response['razorpay_order_id'] as String?,
     );
 
-    // 2) Save order to Firestore so the user can view it in their profile/history
-    await _saveOrderToFirestore(uid, summary, cart);
+    // 2) Save order to Supabase so the user can view it in their profile/history
+    await _saveOrderToSupabase(uid, summary, cart);
 
     return summary;
   }
@@ -97,32 +96,30 @@ class PaymentService {
     );
   }
 
-  Future<void> _saveOrderToFirestore(
+  Future<void> _saveOrderToSupabase(
     String uid,
     OrderSummary summary,
     CartState cart,
   ) async {
-    await FirebaseFirestore.instance
-        .collection('orders')
-        .doc(summary.orderId.toString())
-        .set({
-      'orderId': summary.orderId,
-      'userId': uid,
-      'amountTotal': summary.amountTotal,
-      'currency': summary.currency,
-      'paymentGateway': summary.paymentGateway,
-      'status': 'pending_payment',
-      'items': cart.items
-          .map((e) => {
-                'productId': e.productId,
-                'skuId': e.skuId,
-                'name': e.name,
-                'price': e.price,
-                'quantity': e.quantity,
-              })
-          .toList(),
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await Supabase.instance.client.from('orders').insert({
+        'id': summary.orderId,
+        'user_id': uid,
+        'amount_total': summary.amountTotal,
+        'currency': summary.currency,
+        'payment_gateway': summary.paymentGateway,
+        'status': 'pending_payment',
+        'items': cart.items
+            .map((e) => {
+                  'productId': e.productId,
+                  'skuId': e.skuId,
+                  'name': e.name,
+                  'price': e.price,
+                  'quantity': e.quantity,
+                })
+            .toList(),
+      });
+    } catch (_) {}
   }
 }
 

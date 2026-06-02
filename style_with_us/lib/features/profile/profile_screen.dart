@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -47,7 +47,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               final newName = controller.text.trim();
               if (newName.isNotEmpty) {
                 try {
-                  await FirebaseAuth.instance.currentUser?.updateDisplayName(newName);
+                  final uid = Supabase.instance.client.auth.currentUser?.id;
+                  if (uid != null) {
+                    await Supabase.instance.client.from('users').update({'name': newName}).eq('id', uid);
+                  }
                   if (context.mounted) {
                     Navigator.pop(context);
                     setState(() {}); // refresh UI
@@ -69,14 +72,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    final displayName = user?.displayName ?? 'Guest';
+    final user = Supabase.instance.client.auth.currentUser;
     final email = user?.email ?? '';
-    final roleAsync = ref.watch(userRoleProvider);
-    final role = roleAsync.value ?? '';
-    final isShopper = role == 'user';
-    final isBrand = role == 'brand';
-    final isAdmin = role == 'admin';
+
+    final future = user != null
+        ? Supabase.instance.client.from('users').select('name,role').eq('id', user.id).single()
+        : Future.value(null);
+
+    return FutureBuilder(
+      future: future,
+      builder: (context, snapshot) {
+        String displayName = 'Guest';
+        String role = '';
+        if (snapshot.hasData && snapshot.data != null) {
+          final data = snapshot.data;
+          if (data is Map<String, dynamic>) {
+            displayName = (data['name'] as String?) ?? displayName;
+            role = (data['role'] as String?) ?? '';
+          } else if (data is List && data.isNotEmpty) {
+            final first = data.first;
+            if (first is Map<String, dynamic>) {
+              displayName = (first['name'] as String?) ?? displayName;
+              role = (first['role'] as String?) ?? '';
+            }
+          }
+        }
+        final isShopper = role == 'user';
+        final isBrand = role == 'brand';
+        final isAdmin = role == 'admin';
 
     // we still show the same tabs for everyone, but contents can differ
     return DefaultTabController(
@@ -135,20 +158,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     const SizedBox(height: space24),
                     Row(
                       children: [
-                        if (isShopper) ...const [
+                        if (isShopper) ...[
                           _StatCard(label: 'Saved Outfits', value: '24', icon: Icons.favorite),
-                          SizedBox(width: space12),
-                          _StatCard(
-                              label: 'Purchases', value: '8', icon: Icons.shopping_bag_outlined),
-                          SizedBox(width: space12),
+                          const SizedBox(width: space12),
+                          _StatCard(label: 'Purchases', value: '8', icon: Icons.shopping_bag_outlined),
+                          const SizedBox(width: space12),
                           _StatCard(label: 'Following', value: '18', icon: Icons.people_alt),
-                        ] else if (isBrand) ...const [
+                        ] else if (isBrand) ...[
                           _StatCard(label: 'Products', value: '12', icon: Icons.checkroom_outlined),
-                          SizedBox(width: space12),
+                          const SizedBox(width: space12),
                           _StatCard(label: 'Orders', value: '58', icon: Icons.receipt_long),
-                        ] else if (isAdmin) ...const [
+                        ] else if (isAdmin) ...[
                           _StatCard(label: 'Users', value: '1.2k', icon: Icons.people),
-                          SizedBox(width: space12),
+                          const SizedBox(width: space12),
                           _StatCard(label: 'Brands', value: '84', icon: Icons.store),
                         ],
                       ],
@@ -356,8 +378,9 @@ class _SettingsTab extends StatelessWidget {
             onPressed: () async {
               Navigator.pop(ctx);
               try {
-                await FirebaseAuth.instance.currentUser?.delete();
-                await AuthService.instance.logout();
+                 // Supabase does not support client-side account deletion without admin privileges.
+                 // We'll sign out the user instead and recommend deletion via admin API.
+                 await AuthService.instance.logout();
                 if (context.mounted) {
                   context.go('/login');
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -390,37 +413,56 @@ class _SettingsTab extends StatelessWidget {
         Text('Account', style: bodyMedium.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: space8),
         _SettingsTile(
-          title: 'Edit Profile',
-          onTap: () {
-            final user = FirebaseAuth.instance.currentUser;
-            final currentName = user?.displayName ?? '';
-            // edit display name
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text('Edit Profile', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Display Name',
-                        border: OutlineInputBorder(),
+            title: 'Edit Profile',
+            onTap: () {
+              final uid = Supabase.instance.client.auth.currentUser?.id;
+              final currentNameFuture = uid != null
+                  ? Supabase.instance.client.from('users').select('name').eq('id', uid).single()
+                  : Future.value(null);
+              showDialog(
+                context: context,
+                builder: (ctx) => FutureBuilder(
+                  future: currentNameFuture,
+                  builder: (c, snap) {
+                    String currentName = '';
+                    if (snap.hasData && snap.data != null) {
+                      final d = snap.data;
+                      if (d is Map<String, dynamic>) {
+                        currentName = (d['name'] as String?) ?? '';
+                      } else if (d is List && d.isNotEmpty) {
+                        final first = d.first;
+                        if (first is Map<String, dynamic>) currentName = (first['name'] as String?) ?? '';
+                      }
+                    }
+                    return AlertDialog(
+                      title: const Text('Edit Profile', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            decoration: const InputDecoration(
+                              labelText: 'Display Name',
+                              border: OutlineInputBorder(),
+                            ),
+                            controller: TextEditingController(text: currentName),
+                            onSubmitted: (val) async {
+                              final name = val.trim();
+                              if (name.isNotEmpty) {
+                                final uid2 = Supabase.instance.client.auth.currentUser?.id;
+                                if (uid2 != null) {
+                                  await Supabase.instance.client.from('users').update({'name': name}).eq('id', uid2);
+                                }
+                                if (ctx.mounted) Navigator.pop(ctx);
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      controller: TextEditingController(text: currentName),
-                      onSubmitted: (val) async {
-                        final name = val.trim();
-                        if (name.isNotEmpty) {
-                          await user?.updateDisplayName(name);
-                          if (ctx.mounted) Navigator.pop(ctx);
-                        }
-                      },
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
+              );
+            },
         ),
         _SettingsTile(
           title: 'Change Password',

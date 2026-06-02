@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Luxury Brand Portal | Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .premium-card {
+            background-color: #1E293B;
+            border: 1px solid #334155;
+        }
+
+        .chart-line-solid {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 3s ease-in-out forwards;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: 0; }
+        }
+
+        body {
+            background-color: #0F172A;
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#0F172A",
+                      "surface": "#1E293B",
+                      "primary": "#6366F1",
+                      "on-primary": "#FFFFFF",
+                      "on-surface": "#F8FAFC",
+                      "on-surface-variant": "#94A3B8",
+                      "outline": "#334155",
+                      "secondary": "#6366F1",
+                      "tertiary": "#6366F1",
+                      "surface-container": "#1E293B",
+                      "surface-container-low": "#1E293B",
+                      "surface-container-highest": "#334155"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "unit": "8px",
+                      "gutter": "16px",
+                      "container-margin": "24px",
+                      "stack-lg": "32px"
+              },
+              "fontFamily": {
+                      "label-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- NavigationDrawer -->
+<nav class="hidden md:flex flex-col h-full w-72 fixed left-0 top-0 z-40 bg-surface border-r border-outline shadow-2xl">
+<div class="flex flex-col h-full py-8">
+<!-- Header/Profile Section -->
+<div class="px-6 mb-10">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-full border border-primary/30 p-1">
+<img alt="Brand Logo" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEO-KlmFbxfovxuUM1eVGv-EFtIdn4oZdyqVDyIS1Qdww-mxQCNLvGHKjOye-LJsVnqMfhtRi5R7ZxSkpI1JpziYnM4ckgqiT2f3bQ4T2d0xsST01byHLEYcHLFVeFeI6IfaalsGPBcytoB6iNmpzbgERfsBsQ776gtPoLZcXslx3gLaID6QRqK0K8nrKwl1hwriSKobMaOtQ9euWCPFr6kRlqW2uikhhsbEbVpNgEXe28i3D6HnL_w4AxLM-8IJwsyUdByey96C7A"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Luxury Brand Portal</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Brand Manager</p>
+</div>
+</div>
+<div class="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full w-fit">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-label-sm text-label-sm text-primary">Active</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-1">
+<a class="bg-primary text-on-primary border-r-4 border-white px-6 py-4 flex items-center gap-4 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant px-6 py-4 flex items-center gap-4 hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="text-on-surface-variant px-6 py-4 flex items-center gap-4 hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="text-on-surface-variant px-6 py-4 flex items-center gap-4 hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="text-on-surface-variant px-6 py-4 flex items-center gap-4 hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+<!-- Bottom Action -->
+<div class="mt-auto px-6">
+<div class="premium-card rounded-xl p-4">
+<p class="font-label-sm text-label-sm text-primary mb-2">AI Insights Ready</p>
+<p class="font-label-md text-label-md text-on-surface-variant leading-snug">Predictive trends for SS24 are now available.</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 md:left-72 md:w-[calc(100%-18rem)] bg-background/80 backdrop-blur-md border-b border-outline h-16 px-6 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary md:hidden">menu</span>
+<h1 class="font-display-lg text-[24px] text-on-surface leading-none">Style With Us</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex flex-col items-end mr-2">
+<span class="font-label-sm text-label-sm text-on-surface">Alex Rivera</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Senior Stylist</span>
+</div>
+<div class="w-10 h-10 rounded-full border border-outline overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQK4DkrHxfYkONGq6dNC-7T4OPQI33oilXAD4V5eO4XO66dqaKd0xIfWx-GrZi11Bj0lp4Zskq3NkMMJrXA6jr5-cUYl9bsPOUuQvAcZdx3Zg0XRJiw2qVsdpfp_L1kCqjaAkyOb7usW4k17GBLEJ4qzmVXPoZOoaaiOUz5Bdm5alJWy9eyZDrQaLh-YERsaCjCK9DflUG4gWQKl7R1katizMLTvvBnSvvtuddrwd0mRFg6becrVV-XRMHblcAYLqXTJDm0B_gUkHd"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-on-surface transition-colors">settings</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 mt-16 md:ml-72 p-6 lg:p-10 space-y-stack-lg">
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<nav class="flex gap-2 text-label-sm font-label-sm text-on-surface-variant mb-2">
+<span>Admin</span>
+<span>/</span>
+<span class="text-primary">Dashboard</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Performance Overview</h2>
+</div>
+<div class="flex gap-4 items-center premium-card p-3 rounded-xl min-w-[240px]" id="async-brand-data">
+<div class="w-12 h-12 rounded-lg bg-outline animate-pulse"></div>
+<div class="space-y-2 flex-1">
+<div class="h-3 w-2/3 bg-outline rounded animate-pulse"></div>
+<div class="h-2 w-1/2 bg-outline rounded animate-pulse"></div>
+</div>
+</div>
+</section>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="premium-card rounded-xl p-6 group">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">stylus_note</span>
+<span class="text-primary font-label-sm text-label-sm bg-primary/10 px-2 py-0.5 rounded">+12.5%</span>
+</div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Try-ons Today</h3>
+<p class="font-display-lg text-[32px] text-on-surface">1,482</p>
+<div class="mt-4 h-1 w-full bg-outline rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+<div class="premium-card rounded-xl p-6 group">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">shopping_bag</span>
+<span class="text-primary font-label-sm text-label-sm bg-primary/10 px-2 py-0.5 rounded">+8.2%</span>
+</div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Total Sales</h3>
+<p class="font-display-lg text-[32px] text-on-surface">$42,910</p>
+<div class="mt-4 h-1 w-full bg-outline rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/2"></div>
+</div>
+</div>
+<div class="premium-card rounded-xl p-6 group">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">magic_button</span>
+<span class="text-primary font-label-sm text-label-sm bg-primary/10 px-2 py-0.5 rounded">+24%</span>
+</div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">AI Recommendation Match</h3>
+<p class="font-display-lg text-[32px] text-on-surface">94%</p>
+<div class="mt-4 h-1 w-full bg-outline rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[94%]"></div>
+</div>
+</div>
+<div class="premium-card rounded-xl p-6 group">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">group</span>
+<span class="text-primary font-label-sm text-label-sm bg-primary/10 px-2 py-0.5 rounded">+4.1%</span>
+</div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Active Sessions</h3>
+<p class="font-display-lg text-[32px] text-on-surface">312</p>
+<div class="mt-4 h-1 w-full bg-outline rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/3"></div>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<div class="lg:col-span-2 premium-card rounded-xl p-8">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Try-ons vs Sales</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Real-time daily conversion metrics</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Try-ons</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary/40"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sales</span>
+</div>
+</div>
+</div>
+<div class="relative h-[300px] w-full">
+<svg class="absolute inset-0 w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 400 100">
+<!-- Grid Lines -->
+<line stroke="#334155" stroke-width="0.5" x1="0" x2="400" y1="25" y2="25"></line>
+<line stroke="#334155" stroke-width="0.5" x1="0" x2="400" y1="50" y2="50"></line>
+<line stroke="#334155" stroke-width="0.5" x1="0" x2="400" y1="75" y2="75"></line>
+<!-- Line 1: Try-ons (Deep Indigo) -->
+<path class="chart-line-solid" d="M0,80 Q50,20 100,50 T200,30 T300,60 T400,20" fill="none" stroke="#6366F1" stroke-width="3"></path>
+<!-- Line 2: Sales (Indigo Faded) -->
+<path class="chart-line-solid" d="M0,90 Q50,60 100,80 T200,60 T300,75 T400,40" fill="none" stroke="#6366F1" stroke-opacity="0.4" stroke-width="3"></path>
+</svg>
+<div class="absolute bottom-[-24px] w-full flex justify-between px-2 font-label-sm text-[10px] text-on-surface-variant">
+<span>08:00</span>
+<span>12:00</span>
+<span>16:00</span>
+<span>20:00</span>
+<span>00:00</span>
+</div>
+</div>
+</div>
+<div class="premium-card rounded-xl p-8 flex flex-col items-center justify-center text-center space-y-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">AI Match Accuracy</h3>
+<div class="relative w-40 h-40">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="45" stroke="#334155" stroke-width="8"></circle>
+<circle class="transition-all duration-1000 ease-out" cx="50" cy="50" fill="none" r="45" stroke="#6366F1" stroke-dasharray="283" stroke-dashoffset="34" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display-lg text-[32px] text-on-surface">88%</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase">Perfect Fit</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    The virtual stylist successfully matched 1,240 items to user body shapes today with high satisfaction.
+                </p>
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all">
+                    View Style Trends
+                </button>
+</div>
+</div>
+<!-- Inventory & Recent Activity -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="premium-card rounded-xl overflow-hidden group">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="Futuristic fashion warehouse" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkW_PziZWhhtx7HNM-uwQoR7Y-jcL2UhQzT-probI6BwyVukziHC8W3uxIQ95FDIQ-8pd4OmxmNhYWe7by6wJj2Gf0Wq2CQN-CXacd3ubOVYa9u8GGVDOQdEOjMkBX32AZNU-kH5Zh0G2sIgFE1SUyIOW1mWVMaHj7Btqsxxje3VyrhG_NHreXrNnvKnHYBLVRf7_pAZ45vvApvoD2759g2bsBKG-mN_cZIbL9zrt5jJx21RX1pXp_H7amhmLUc_U7biZ2oEp4vk-E"/>
+<div class="absolute inset-0 bg-black/40"></div>
+<div class="absolute bottom-4 left-6">
+<span class="font-label-sm text-label-sm bg-primary text-on-primary px-3 py-1 rounded-full">Top Seller</span>
+<h4 class="font-headline-md text-headline-md text-white mt-2">Cyber-Knit Collection</h4>
+</div>
+</div>
+<div class="p-6 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Inventory Status</span>
+<span class="font-body-lg text-body-lg text-on-surface">Low Stock - 14 Units</span>
+</div>
+<button class="bg-outline text-on-surface px-4 py-2 rounded-lg font-label-md hover:bg-white/10 transition-colors">Manage Stock</button>
+</div>
+</div>
+<div class="premium-card rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Recent Activity</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">New VIP Member Joined</p>
+<p class="font-label-sm text-[10px] text-on-surface-variant">2 minutes ago</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Bulk Order #4928 Processed</p>
+<p class="font-label-sm text-[10px] text-on-surface-variant">15 minutes ago</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">insights</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Weekly Report Generated</p>
+<p class="font-label-sm text-[10px] text-on-surface-variant">1 hour ago</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Mobile Navigation Bar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface border-t border-outline h-20 px-6 pb-2 flex justify-around items-center">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">magic_button</span>
+<span class="font-label-sm text-label-sm">AI Stylist</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-sm text-label-sm">Cart</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const shimmerBox = document.getElementById('async-brand-data');
+            setTimeout(() => {
+                shimmerBox.innerHTML = `
+                    <div class="flex gap-4 items-center w-full">
+                        <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stars</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Premium Account</p>
+                            <p class="font-label-md text-label-md text-on-surface">Luxury Tier Status: Gold</p>
+                        </div>
+                        <span class="material-symbols-outlined text-on-surface-variant">verified</span>
+                    </div>
+                `;
+            }, 3500);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "546023044699",
+    "project_id": "style-with-us-4ee75",
+    "storage_bucket": "style-with-us-4ee75.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546023044699:android:049fa65619a28635cf317e",
+        "android_client_info": {
+          "package_name": "saif.stylewithus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCY5pqtJLsZUyTDfWRX3URLcMnghsymXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

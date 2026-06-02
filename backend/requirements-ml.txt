@@ -1,0 +1,13 @@
+# ML and Computer Vision dependencies
+# Install separately due to large size:
+# pip install --break-system-packages -r requirements-ml.txt
+
+torch>=2.2.0
+torchvision>=0.15.2
+# skin-tone-classifier 1.4.0 not available on Python 3.12; use latest compatible release:
+skin-tone-classifier>=1.2.6
+pillow==10.1.0
+opencv-python==4.8.1.78
+numpy==1.24.3
+colormath==3.0.0
+scikit-learn==1.3.2

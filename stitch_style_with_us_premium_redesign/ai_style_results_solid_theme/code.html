@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#0F172A",
+                      "surface": "#1E293B",
+                      "surface-container": "#1E293B",
+                      "on-surface": "#F8FAFC",
+                      "on-background": "#F8FAFC",
+                      "primary": "#3B82F6",
+                      "on-primary": "#F8FAFC",
+                      "secondary": "#3B82F6",
+                      "on-surface-variant": "#94A3B8",
+                      "outline": "#334155",
+                      "outline-variant": "#334155"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "unit": "8px",
+                      "gutter": "16px",
+                      "container-margin": "24px",
+                      "stack-lg": "32px"
+              },
+              "fontFamily": {
+                      "label-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .solid-card {
+            background-color: #1E293B;
+            border: 1px solid #334155;
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.8s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary/30">
+<!-- Top AppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/95 border-b border-outline flex justify-between items-center px-container-margin h-16">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-200 hover:opacity-80 transition-opacity flex items-center justify-center" onclick="window.history.back()">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-on-surface">AI Results</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-200 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant">share</span>
+</button>
+<button class="active:scale-95 duration-200 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-container-margin max-w-7xl mx-auto">
+<!-- Hero Match Section -->
+<section class="flex flex-col items-center justify-center mb-stack-lg animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="relative flex items-center justify-center w-64 h-64">
+<!-- Circular Progress -->
+<svg class="w-full h-full">
+<circle class="text-outline" cx="128" cy="128" fill="transparent" r="110" stroke="currentColor" stroke-width="8"></circle>
+<circle class="progress-ring__circle text-primary" cx="128" cy="128" fill="transparent" r="110" stroke="currentColor" stroke-dasharray="691" stroke-dashoffset="34.55" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-display-lg text-display-lg text-on-surface">95%</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Match Score</span>
+</div>
+</div>
+<div class="mt-stack-md text-center max-w-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Style Analysis Complete</h2>
+<p class="text-on-surface-variant font-body-md">Our AI analyzed your aesthetic preferences and curated these pieces from the Cyber-Luxury collection to perfectly complement your silhouette.</p>
+</div>
+</section>
+<!-- Recommended Items Grid -->
+<section class="mt-12">
+<div class="flex items-center justify-between mb-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">Curated For You</h3>
+<span class="font-label-md text-label-md text-primary">4 Items Found</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="solid-card rounded-xl overflow-hidden group transition-all duration-300 hover:translate-y-[-4px]">
+<div class="relative aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A high-fashion model wearing a structured metallic silver trench coat with iridescent panels, standing in a futuristic midnight navy studio. The lighting is sharp and cinematic, with cyan and violet rim lights highlighting the sleek texture of the garment. The overall aesthetic is cyber-luxury, emphasizing precision and cutting-edge digital fashion innovation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEizdNTqmzCTq6PMcaRx-KeObcCHeZM4m3npp9zmhpWYqFIs38Vaw-7TZakBjRTUcYwPeBzUI96G97kvfmDRSgpUCJvBbT77jXMMAfi73XVaW1YKucCww1LCIOBCmZy0zOSm-2V6rrNNHzLrzmk6Lt0YO54PPffmnQ1aMsWZZIGD24Bs-XxgzjjoKPM6hm0r5kSx3uRh9WzrBaisOkrxjL0FQL3l-MEKCR-2MzpzdNpynf7sAuFqj5J71yFW411BNxLo9XAOwm-9BZ"/>
+<div class="absolute top-3 right-3 bg-background/80 px-2 py-1 rounded-full flex items-center gap-1 border border-outline">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-label-sm text-on-surface">98% Match</span>
+</div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-sm text-on-surface-variant uppercase">Nexus Outerwear</p>
+<h4 class="font-label-md text-label-md text-on-surface">Iridescent Trench</h4>
+</div>
+<span class="font-label-md text-primary">$1,250</span>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-label-md active:scale-95 transition-transform">View Details</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="solid-card rounded-xl overflow-hidden group transition-all duration-300 hover:translate-y-[-4px]">
+<div class="relative aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A close-up of a minimalist black technical vest with integrated LED fiber optics glowing in electric violet. The background is a dark, atmospheric urban setting with soft bokeh lights in cyan. The garment features high-end glassmorphic buckles and a matte charcoal finish, embodying a sophisticated tech-wear luxury aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa3dY5UyTGKNNiYGHUlwGGOfhfP7fzWQdoG4xC-B1DnNrAkmsQ7MQ2KJ26YUJIRMhKS8HpM4mm4dqybf61qjgqpET2f69lIW-jurmZVQZvfPR3aloaOY28PM7vPzp6pc6KxMihCH0H7RpNzSF74Yhs4u8x1_7YCWaPki5o5TtWmduKEO9MmYvjPyXeW-84yn9fWePkbXhQo5mWcRo911grAQa9fiUZ_Vx66qLqk2-IgI8kc-yDlkrOtc4vYHok25YIZ6uEnmqkSnNv"/>
+<div class="absolute top-3 right-3 bg-background/80 px-2 py-1 rounded-full flex items-center gap-1 border border-outline">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-label-sm text-on-surface">94% Match</span>
+</div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-sm text-on-surface-variant uppercase">Aether Tech</p>
+<h4 class="font-label-md text-label-md text-on-surface">Luminous Vest</h4>
+</div>
+<span class="font-label-md text-primary">$890</span>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-label-md active:scale-95 transition-transform">View Details</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="solid-card rounded-xl overflow-hidden group transition-all duration-300 hover:translate-y-[-4px]">
+<div class="relative aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A pair of sleek, futuristic high-top sneakers with transparent soles and glowing cyan accents. The shoes are set against a minimalist dark charcoal pedestal under a single focused spotlight. The textures include premium synthetic leather and refractive glass-like elements, creating a sense of elite digital-age craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYrwAL9q0hjKJ2wUqdbP_SlAyRZEsyzwHf4JmMmDbXbekywIZMhgSEIxey8au-ae5ll4B0roc0pT6EtiYD6lRjKJRS32KnX0Eft_DgQFhzqyCHuwym7t6oO1SvtguQ1ZXAOkZrPBPHwLfTxGBw6eDHBBdzHIk2Fn59UfdCXYmFeVKUmTux_4O9GBXWAgVVvgg25xCOtjAUR4RFvobC9HA7tmv7bKfzCqwoHHwUl03s_V0AvQM5GMnWk88dhstgBzwMvP10FGq6REHn"/>
+<div class="absolute top-3 right-3 bg-background/80 px-2 py-1 rounded-full flex items-center gap-1 border border-outline">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-label-sm text-on-surface">92% Match</span>
+</div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-sm text-on-surface-variant uppercase">Prism Footwear</p>
+<h4 class="font-label-md text-label-md text-on-surface">Vector Runner 01</h4>
+</div>
+<span class="font-label-md text-primary">$620</span>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-label-md active:scale-95 transition-transform">View Details</button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="solid-card rounded-xl overflow-hidden group transition-all duration-300 hover:translate-y-[-4px]">
+<div class="relative aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A luxury handbag crafted from matte black carbon fiber with a glowing violet digital clasp. The bag is held by a model with neon cyan nail art, positioned against a background of blurred digital interfaces and soft purple glows. The aesthetic is ultra-modern, combining traditional high-end luxury with futuristic digital utility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADO3VUZuup0hk_3sFeN2WZh4cRZEJ0jinr4mF_fOKh0ETXJV50y58H5kkMaG29FS5xfdy36jqtur_byJJDBiVag6_ZIUBt4pF7Ehply-Q6S2ePp5fvmFMAI6oRb7ScmjE9V_XcLzhYeZOdWto0RX6vtSuTbofMyjkzIdMwSRzbNreI9oTpGFNhIrQql7Wo1FE4uToBLlTH61ZSJQqfSaK-Na0_en-U9gKG-xmwya8sOiIwwisGODqJqvkgFFApjug97UQyBa29orcA"/>
+<div class="absolute top-3 right-3 bg-background/80 px-2 py-1 rounded-full flex items-center gap-1 border border-outline">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-label-sm text-on-surface">89% Match</span>
+</div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-sm text-on-surface-variant uppercase">Onyx Accessories</p>
+<h4 class="font-label-md text-label-md text-on-surface">Carbon Clutch</h4>
+</div>
+<span class="font-label-md text-primary">$1,400</span>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-label-md active:scale-95 transition-transform">View Details</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Insights Bento Grid -->
+<section class="mt-16">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-md">AI Style Insights</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="solid-card p-6 rounded-xl md:col-span-2 flex flex-col justify-between min-h-[200px]">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<h4 class="font-label-md text-on-surface">Aesthetic Profile</h4>
+</div>
+<p class="text-on-surface-variant font-body-md">Your style leaning is 82% 'Cyber-Minimalist' with a 15% 'Avant-Garde' twist. The AI suggests focusing on structured silhouettes with high-tech fabrics.</p>
+</div>
+<div class="flex gap-4 mt-4">
+<div class="h-1.5 flex-1 bg-outline rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[82%]"></div>
+</div>
+<div class="h-1.5 flex-1 bg-outline rounded-full overflow-hidden">
+<div class="h-full bg-primary/40 w-[15%]"></div>
+</div>
+</div>
+</div>
+<div class="solid-card p-6 rounded-xl flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">palette</span>
+<h4 class="font-label-md text-on-surface">Color Palette</h4>
+<p class="text-label-sm text-on-surface-variant mt-1">Recommended for Skin Tone</p>
+<div class="flex gap-2 mt-4">
+<div class="w-8 h-8 rounded-full bg-[#0F172A] border border-outline"></div>
+<div class="w-8 h-8 rounded-full bg-[#3B82F6] border border-outline"></div>
+<div class="w-8 h-8 rounded-full bg-[#F8FAFC] border border-outline"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-background border-t border-outline flex justify-around items-center h-20 px-6 pb-2">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">magic_button</span>
+<span class="font-label-sm text-label-sm">AI Stylist</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-sm text-label-sm">Cart</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple animation logic for the progress ring
+        window.addEventListener('load', () => {
+            const circle = document.querySelector('.progress-ring__circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = circumference;
+            
+            const offset = circumference - (95 / 100 * circumference);
+            
+            // Trigger animation after a slight delay
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+            }, 300);
+        });
+    </script>
+</body></html>

@@ -237,3 +237,5 @@ The default `ApiClient` base URL is `http://localhost:8000`, so if you run on a 
   - Run your generative / diffusion model and return the composed image URL as `result_image_url`.
 
 The Flutter app is already structured to consume these real endpoints without major UI changes.
+#   u b a i d - f y p  
+ 
